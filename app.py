@@ -4,6 +4,10 @@ from io import BytesIO
 import os
 import tempfile
 
+import shutil
+ffmpeg_path = shutil.which("ffmpeg")
+st.write("ffmpeg path:", ffmpeg_path)
+
 def convert_video_to_audio(video_file):
     # Créer des fichiers temporaires pour la vidéo et l'audio
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_video:
