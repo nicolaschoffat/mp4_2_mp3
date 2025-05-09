@@ -1,5 +1,2 @@
 streamlit
-moviepy
-imageio[ffmpeg]
-tqdm
-numpy
+ffmpeg-python
