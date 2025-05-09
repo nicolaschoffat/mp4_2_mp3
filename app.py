@@ -4,9 +4,8 @@ from io import BytesIO
 import os
 import tempfile
 
-import shutil
-ffmpeg_path = shutil.which("ffmpeg")
-st.write("ffmpeg path:", ffmpeg_path)
+# Cette ligne doit être tout en haut
+st.set_page_config(page_title="Convertisseur MP4 vers MP3", page_icon="🎵")
 
 def convert_video_to_audio(video_file):
     # Créer des fichiers temporaires pour la vidéo et l'audio
@@ -37,7 +36,6 @@ def convert_video_to_audio(video_file):
     return BytesIO(audio_bytes)
 
 # Interface Streamlit
-st.set_page_config(page_title="Convertisseur MP4 vers MP3", page_icon="🎵")
 st.image("logo_googleworkspace.png", width=200)
 st.title("Convertisseur MP4 vers MP3 🎵")
 
