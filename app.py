@@ -17,9 +17,10 @@ def convert_video_to_audio(video_file):
     temp_audio_path = temp_audio.name
     temp_audio.close()
 
-    # Lancer ffmpeg via subprocess
+    # Lancer ffmpeg via subprocess avec overwrite (-y)
     command = [
-        "ffmpeg", "-i", temp_video_path,
+        "ffmpeg", "-y",  # Overwrite automatiquement
+        "-i", temp_video_path,
         "-vn", "-acodec", "libmp3lame",
         temp_audio_path
     ]
