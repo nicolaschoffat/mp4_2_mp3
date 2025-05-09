@@ -1,5 +1,5 @@
 import streamlit as st
-import ffmpeg
+import subprocess
 from io import BytesIO
 import os
 import tempfile
@@ -14,8 +14,13 @@ def convert_video_to_audio(video_file):
     temp_audio_path = temp_audio.name
     temp_audio.close()
 
-    # Lancer ffmpeg pour convertir
-    ffmpeg.input(temp_video_path).output(temp_audio_path, format='mp3', acodec='libmp3lame').run()
+    # Lancer ffmpeg via subprocess
+    command = [
+        "ffmpeg", "-i", temp_video_path,
+        "-vn", "-acodec", "libmp3lame",
+        temp_audio_path
+    ]
+    subprocess.run(command, check=True)
 
     # Lire le fichier audio dans un buffer
     with open(temp_audio_path, "rb") as f:
@@ -38,12 +43,18 @@ if uploaded_file is not None:
     st.video(uploaded_file)
     if st.button("Convertir en MP3"):
         with st.spinner("Conversion en cours..."):
-            audio_buffer = convert_video_to_audio(uploaded_file)
-            st.success("Conversion terminée !")
-            st.download_button(
-                label="Télécharger le fichier MP3",
-                data=audio_buffer,
-                file_name="audio_converti.mp3",
-                mime="audio/mpeg"
-            )
-
+            try:
+                audio_buffer = convert_video_to_audio(uploaded_file)
+                st.success("Conversion terminée !")
+                st.download_button(
+                    label="Télécharger le fichier MP3",
+                    data=audio_buffer,
+                    file_name="audio_converti.mp3",
+                    mime="audio/mpeg"
+                )
+            except subprocess.CalledProcessError as e:
+                st.error("Erreur lors de l'exécution de ffmpeg. Détails :")
+                st.code(e)
+            except Exception as e:
+                st.error("Une erreur s'est produite pendant la conversion :")
+                st.code(str(e))
