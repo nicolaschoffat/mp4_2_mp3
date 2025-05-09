@@ -29,6 +29,8 @@ def convert_video_to_audio(video_file):
     return BytesIO(audio_bytes)
 
 # Interface Streamlit
+st.set_page_config(page_title="Convertisseur MP4 vers MP3", page_icon="🎵")
+st.image("logo_googleworkspace.png", width=200)
 st.title("Convertisseur MP4 vers MP3 🎵")
 
 uploaded_file = st.file_uploader("Téléversez une vidéo MP4", type=["mp4"])
