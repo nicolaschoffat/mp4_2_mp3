@@ -1,30 +1,29 @@
 import streamlit as st
-from moviepy.editor import VideoFileClip
+import ffmpeg
 from io import BytesIO
 import os
+import tempfile
 
 def convert_video_to_audio(video_file):
-    # Sauvegarder temporairement le fichier vidéo uploadé
-    with open("temp_video.mp4", "wb") as f:
-        f.write(video_file.read())
+    # Créer des fichiers temporaires pour la vidéo et l'audio
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp4") as temp_video:
+        temp_video.write(video_file.read())
+        temp_video_path = temp_video.name
 
-    # Charger la vidéo et extraire l'audio
-    clip = VideoFileClip("temp_video.mp4")
-    audio = clip.audio
+    temp_audio = tempfile.NamedTemporaryFile(delete=False, suffix=".mp3")
+    temp_audio_path = temp_audio.name
+    temp_audio.close()
 
-    # Sauvegarder l'audio dans un fichier temporaire
-    audio_file_path = "temp_audio.mp3"
-    audio.write_audiofile(audio_file_path)
+    # Lancer ffmpeg pour convertir
+    ffmpeg.input(temp_video_path).output(temp_audio_path, format='mp3', acodec='libmp3lame').run()
 
-    # Lire le fichier MP3 dans un buffer BytesIO
-    with open(audio_file_path, "rb") as f:
+    # Lire le fichier audio dans un buffer
+    with open(temp_audio_path, "rb") as f:
         audio_bytes = f.read()
 
-    # Nettoyage des fichiers temporaires
-    clip.close()
-    audio.close()
-    os.remove("temp_video.mp4")
-    os.remove("temp_audio.mp3")
+    # Nettoyage
+    os.remove(temp_video_path)
+    os.remove(temp_audio_path)
 
     return BytesIO(audio_bytes)
 
@@ -47,3 +46,4 @@ if uploaded_file is not None:
                 file_name="audio_converti.mp3",
                 mime="audio/mpeg"
             )
+
